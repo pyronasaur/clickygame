@@ -1,66 +1,95 @@
 import React, { Component } from "react";
 import FriendCard from "./components/FriendCard";
 import Wrapper from "./components/Wrapper";
+import Jumbo from "./components/Jumbo";
 import friends from "./friends.json";
+import Footer from "./components/Footer";
+import Header from "./components/Header";
 import "./App.css";
 
 class App extends Component {
 
   state = {
-    friendList: friends
+    friendList: friends,
+    message: "",
+    score: 0,
+    topScore: 0,
+    idTracker: []
   };
+
+  
 
   doTheShuffle = (someArray) => {
     var shuffled = someArray.map((a) => [Math.random(),a]).sort((a,b) => a[0]-b[0]).map((a) => a[1]);
-    console.log(shuffled);
+    //console.log(shuffled);
     return shuffled;
   };
 
-  handleFriendClick = () => {
+  isDupe = (id, arrayOfIds) => {
+    let isDupe = false;
+    arrayOfIds.forEach((item) => {
+      if(item===id) {
+        isDupe = true;
+      }
+    })
+    return isDupe;
+  }
+
+  handleFriendClick = (id) => {
     //event.preventDefault();
     let friendArray = this.doTheShuffle(this.state.friendList);
+    let nuscore;
+    let top;
+    let msg;
+    let idArray = this.state.idTracker;
+
+    if(!this.isDupe(id, idArray)) {
+      idArray.push(id);
+      nuscore = this.state.score + 1;
+      top = (nuscore >= this.state.topScore ? nuscore : this.state.topScore);
+      msg = "You guessed correctly!";      
+    }else {
+      idArray = [];
+      msg = "You guessed incorrectly!";
+      nuscore = 0;
+      top = this.state.topScore;
+    }
 
     this.setState({
-      friendList: friendArray
-    });
+      friendList: friendArray,
+      score: nuscore,
+      topScore: top,
+      message: msg,
+      idTracker: idArray
+    })
   };
 
   render() {
     return (
-      <Wrapper>
-        <h1 className="title">Friends List</h1>
-        {this.state.friendList.map((friend) => {
-          return (
-            <FriendCard
-              name={friend.name}
-              image={friend.image}
-              occupation={friend.occupation}
-              location={friend.location}
-              handleClick={this.handleFriendClick}
-              key={friend.id}
-              id={friend.id}
-            />
-          )
-        })}
-        {/* <FriendCard
-          name={friends[0].name}
-          image={friends[0].image}
-          occupation={friends[0].occupation}
-          location={friends[0].location}
+      <div>
+        <Header 
+          message={this.state.message}
+          score={this.state.score}
+          topScore={this.state.topScore}
         />
-        <FriendCard
-          name={friends[1].name}
-          image={friends[1].image}
-          occupation={friends[1].occupation}
-          location={friends[1].location}
-        />
-        <FriendCard
-          name={friends[2].name}
-          image={friends[2].image}
-          occupation={friends[2].occupation}
-          location={friends[2].location}
-        /> */}
-      </Wrapper>
+        <Jumbo />
+        <Wrapper>
+          {this.state.friendList.map((friend) => {
+            return (
+              <FriendCard
+                name={friend.name}
+                image={friend.image}
+                occupation={friend.occupation}
+                location={friend.location}
+                handleClick={() => this.handleFriendClick(friend.id)}
+                key={friend.id}
+                id={friend.id}
+              />
+            )
+          })}
+        </Wrapper>
+        <Footer />
+      </div>
     );
   }
 }
