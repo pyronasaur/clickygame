@@ -1,0 +1,24 @@
+.jumbo {
+    background-image: url("../../img/leaves.png");
+    background-repeat: repeat;
+    background-color: bisque;
+    color: darkseagreen;
+    min-height: 400px;
+    padding: 180px 20px;
+    padding-bottom: 140px;
+    text-align: center;
+    border-bottom-style: dashed;
+}
+
+h1 {
+    font-size:4rem;
+    margin-bottom: 30px;
+}
+
+h2 {
+    font-weight: bold;
+}
+
+* {
+    font-family: Georgia, 'Times New Roman', Times, serif; 
+}
